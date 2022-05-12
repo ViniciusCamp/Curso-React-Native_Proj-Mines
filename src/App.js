@@ -4,44 +4,59 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  View
 } from 'react-native';
 
 import params from './params'
-import Field from './components/Field'
+import Minefield from './components/Minefield'
+import {
+  createMinedBoard
+} from './functions'
 
+export default class App extends React.Component {
 
-export default App => {
-  return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.welcome}>Iniciando o Mines!</Text>
-      <Text style={styles.instructions}>Tamanho da grade:
-        {params.getRowsAmount()}x{params.getColumnsAmount()}</Text>
+  constructor(props) {
+    super(props)
+    this.state = this.createState()
+  }
 
-      <Field />
-      <Field opened />
-      <Field opened nearMines={1}/>
-      <Field opened nearMines={2}/>
-      <Field opened nearMines={3}/>
-      <Field opened nearMines={6}/>
-      <Field mined/>
-      <Field mined opened/>
-      <Field mined opened exploded/>
-      <Field flagged/>
-      <Field flagged opened/>
-    </SafeAreaView>
-  )
+  minesAmount = () => {
+    const cols = params.getColumnsAmount()
+    const rows = params.getRowsAmount()
+    return Math.ceil(cols * rows * params.difficultLevel)
+  }
+
+  createState = () => {
+    const cols = params.getColumnsAmount()
+    const rows = params.getRowsAmount()
+    return {
+      board: createMinedBoard(rows, cols, this.minesAmount()),
+    }
+  }
+
+  render() {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.welcome}>Iniciando o Mines!</Text>
+        <Text style={styles.instructions}>Tamanho da grade:
+          {params.getRowsAmount()}x{params.getColumnsAmount()}</Text>
+  
+        <View style={styles.board}>
+          <Minefield board={this.state.board} />
+        </View>
+      </SafeAreaView>
+    )
+  }
+
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    justifyContent: 'flex-end'
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  board: {
+    alignItems: 'center',
+    backgroundColor: '#AAA'
   }
 });
